@@ -1,71 +1,63 @@
-import { NavLink } from "react-router-dom";
-import logo from "../assets/logo.png"
+import { NavLink, useLocation } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function Sidebar() {
+  const location = useLocation();
+
+  const isUsersActive =
+    location.pathname === "/users" ||
+    location.pathname === "/userProfileDetails";
+
+  const isModerationActive =
+    location.pathname === "/ModeratioReports" ||
+    location.pathname === "/reports";
+
   return (
     <>
       <div className="sidebar">
-<h2
-  className="logo"
-  style={{
-    marginTop: "10px",
-    paddingBottom: "20px",
-    // borderBottom: "3px solid #DBFF00",
-    // borderRight: "3px solid #DBFF00"   // 🔥 right side line
-  }}
->
-  <img
-    src={logo}
-    alt="logo"
-    style={{
-      width: "180px",
-      height: "32px",
-      display: "block",
-    }}
-  />
-</h2>
+        <h2 className="logo" style={{ marginTop: "10px", paddingBottom: "20px" }}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: "180px", height: "32px", display: "block" }}
+          />
+        </h2>
+
         <ul className="menu">
           <li>
             <NavLink to="/">Dashboard</NavLink>
           </li>
+
           <li>
-            <NavLink to="/users">Users</NavLink>
+            <NavLink to="/users" className={isUsersActive ? "active" : ""}>
+              Users
+            </NavLink>
           </li>
 
           <li>
             <NavLink to="/userslegacy">Users(Legacy)</NavLink>
           </li>
 
-          {/* <li>Verification</li> */}
-          {/* <li>Content Moderation</li> */}
-       <li>
-            <NavLink to="/ModeratioReports">Moderation & Reports</NavLink>
+          <li>
+            <NavLink
+              to="/ModeratioReports"
+              className={isModerationActive ? "active" : ""}
+            >
+              Moderation & Reports
+            </NavLink>
           </li>
-
 
           <li>
             <NavLink to="/payments">Payments</NavLink>
-          </li>
-
-
-
-          {/* <li>
-            <NavLink to="/settings">Settings</NavLink>
-          </li> */}
-          {/* <li>Audit Log</li> */}
-          <li>
-            {/* <NavLink to="/componentLibrary">Component Library</NavLink> */}
           </li>
         </ul>
 
         <p className="version">v1.0.0</p>
       </div>
 
-      {/* CSS in the same file */}
       <style>{`
         * {
           box-sizing: border-box;
-          
           font-family: Inter, sans-serif;
         }
 
@@ -76,7 +68,7 @@ export default function Sidebar() {
         }
 
         .sidebar {
-          position: fixed; /* fix sidebar */
+          position: fixed;
           top: 0;
           left: 0;
           width: 260px;
@@ -85,7 +77,6 @@ export default function Sidebar() {
           padding: 20px;
           overflow-y: auto;
           z-index: 1000;
-          
         }
 
         .logo {
@@ -117,7 +108,7 @@ export default function Sidebar() {
           background: #b6ff00;
           color: black;
           border-radius: 6px;
-          padding:10px;
+          padding: 10px;
         }
 
         .version {
@@ -127,27 +118,9 @@ export default function Sidebar() {
         }
 
         .main {
-          margin-left: 260px; /* leave space for fixed sidebar */
+          margin-left: 260px;
           flex: 1;
           padding: 20px 30px;
-        }
-
-        .topbar {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 20px;
-          position: sticky;
-          top: 0;
-          background: #f4f5f7;
-          z-index: 500;
-          padding-bottom: 10px;
-        }
-
-        .topbar input {
-          width: 60%;
-          padding: 10px;
-          border-radius: 6px;
-          border: 1px solid #ddd;
         }
       `}</style>
     </>
