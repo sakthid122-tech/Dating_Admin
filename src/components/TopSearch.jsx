@@ -56,7 +56,7 @@ topbar: {
   width: "101.30%",
   borderBottom: "3px solid #DBFF00",
   height: "180px",   // 🔥 increase height (try 80px or 90px)
-  marginTop:"-9px",
+  marginTop:"-9.1px",
   position: "sticky",
   top: 0,
   zIndex: 1000,
