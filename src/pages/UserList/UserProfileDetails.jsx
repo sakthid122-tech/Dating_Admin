@@ -944,7 +944,7 @@ export default function UserProfile() {
                             <span className="email-text">✉ {user.email}</span>
                             <span className="divider-dot">|</span>
                             <span className="verification-text">
-                                {user.verified ? "✓ Verified Member" : "Not Verified"}
+                                {user.verified ? "✓ Verified Member" : "Verified"}
                             </span>
                         </div>
 
