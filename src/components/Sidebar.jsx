@@ -1,11 +1,29 @@
 import { NavLink } from "react-router-dom";
+import logo from "../assets/logo.png"
 
 export default function Sidebar() {
   return (
     <>
       <div className="sidebar">
-        <h2 className="logo">💚 LoveLink Admin</h2>
-
+<h2
+  className="logo"
+  style={{
+    marginTop: "10px",
+    paddingBottom: "20px",
+    // borderBottom: "3px solid #DBFF00",
+    // borderRight: "3px solid #DBFF00"   // 🔥 right side line
+  }}
+>
+  <img
+    src={logo}
+    alt="logo"
+    style={{
+      width: "180px",
+      height: "32px",
+      display: "block",
+    }}
+  />
+</h2>
         <ul className="menu">
           <li>
             <NavLink to="/">Dashboard</NavLink>
@@ -47,6 +65,7 @@ export default function Sidebar() {
       <style>{`
         * {
           box-sizing: border-box;
+          
           font-family: Inter, sans-serif;
         }
 
@@ -62,11 +81,11 @@ export default function Sidebar() {
           left: 0;
           width: 260px;
           height: 100vh;
-          background: #1e1e1e;
           color: white;
           padding: 20px;
           overflow-y: auto;
           z-index: 1000;
+          
         }
 
         .logo {

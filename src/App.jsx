@@ -17,7 +17,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<MainLayout />}>
+        <Route  element={<MainLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<UsersList />} />
          <Route path="/userslegacy" element={<UsersLegacy/>}/>

@@ -1,21 +1,26 @@
 .report-overlay {
   position: fixed;
-  inset: 0;
+  top: 70px;      /* 👈 Header height gap */
+  bottom: 10px;   /* 👈 Bottom gap */
+  left: 0;
+  right: 0;
+
   background: rgba(0, 0, 0, 0.45);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
+  align-items: stretch;
   z-index: 999;
 }
 
 .report-modal {
-  width: 650px;
-  max-height: 95vh;
-  overflow-y: auto;
+  width: 500px;
+  height: 100%; /* 👈 instead of 100vh */
   background: #ffffff;
-  border-radius: 16px;
   padding: 25px;
-  font-family: "Inter", sans-serif;
+  overflow-y: auto;
+  border-radius: 16px 0 0 16px;
+
+  animation: slideInRight 0.3s ease;
 }
 
 .report-header {
@@ -228,4 +233,13 @@
   color: white !important;
   cursor: not-allowed;
   opacity: 0.9;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%); /* 👉 Start from right */
+  }
+  to {
+    transform: translateX(0);
+  }
 }

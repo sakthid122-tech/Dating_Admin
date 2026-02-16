@@ -45,17 +45,22 @@ export default function TopSearch() {
 /* ================= INLINE STYLES ================= */
 
 const styles = {
-  /* Topbar */
-  topbar: {
-    height: "72px",
-    // background: "#3A3A3C",
-    background: "#1e1e1e",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 32px",
-    width:"100%"
-  },
+topbar: {
+  background: "#3A3A3C",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  // padding: "0 32px",
+  padding: "20px 32px",
+  marginLeft:"-8px",
+  width: "101.30%",
+  borderBottom: "3px solid #DBFF00",
+  height: "180px",   // 🔥 increase height (try 80px or 90px)
+  marginTop:"-9px",
+  position: "sticky",
+  top: 0,
+  zIndex: 1000,
+},
 
   /* Search */
   searchBox: {

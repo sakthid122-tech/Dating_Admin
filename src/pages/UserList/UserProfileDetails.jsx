@@ -102,6 +102,8 @@
 //                 setTotalReports(reportsCount);
 //                 setReportsList(reportsData);
 //                 setResolvedCount(resolved);
+//                 setTotalUsers(thisWeekUsers);
+
 
 //                 // set percentages
 //                 setTotalUsersPercent(calculatePercentage(thisWeekUsers, lastWeekUsers));
@@ -653,6 +655,8 @@
 // }
 
 
+
+
 import React, { useEffect, useState } from "react";
 import "./UserProfileDetails.css";
 import { FaHeart, FaUserFriends, FaStar } from "react-icons/fa";
@@ -697,6 +701,7 @@ export default function UserProfile() {
     const calculatePercentage = (current, previous) => {
         if (previous === 0 && current > 0) return 100;
         if (previous === 0 && current === 0) return 0;
+
         return Number((((current - previous) / previous) * 100).toFixed(1));
     };
 
@@ -747,6 +752,7 @@ export default function UserProfile() {
                 setTotalReports(reportsCount);
                 setReportsList(reportsData);
                 setResolvedCount(resolved);
+                setTotalUsers(thisWeekUsers);
 
                 setTotalUsersPercent(calculatePercentage(thisWeekUsers, lastWeekUsers));
                 setPremiumUsersPercent(calculatePercentage(thisWeekPremium, lastWeekPremium));
@@ -826,6 +832,7 @@ export default function UserProfile() {
 
     function getUserStatus(user) {
         if (user.is_suspended) return "SUSPENDED";
+
         if (!user.last_seen) return "INACTIVE";
 
         const lastSeenDate = new Date(user.last_seen);
@@ -874,7 +881,10 @@ export default function UserProfile() {
             <div className="page">
                 <div className="error-container">
                     <h2>No User Data Found</h2>
-                    <button className="btn-primary" onClick={() => navigate("/users")}>
+                    <button
+                        className="btn-primary"
+                        onClick={() => navigate("/users")}
+                    >
                         Go Back to Users
                     </button>
                 </div>
@@ -896,7 +906,9 @@ export default function UserProfile() {
         <div className="user-profile-page">
             {/* Breadcrumb */}
             <div className="breadcrumb">
-                Users List <span className="arrow">&gt;</span> {user.nickname}
+                <span className="breadcrumb-link">Users List</span>
+                <span className="breadcrumb-separator">›</span>
+                <span className="breadcrumb-current">{user.nickname}</span>
             </div>
 
             {/* Profile Header Card */}
@@ -914,49 +926,44 @@ export default function UserProfile() {
                         <span className="online-indicator"></span>
                     </div>
 
-                    <div className="profile-user-info">
-                        <h1 className="user-name">{user.nickname || "Unknown User"}</h1>
+                    <div className="profile-header-info">
+                        <h1 className="profile-name">{user.nickname || "Unknown User"}</h1>
 
-                        <div className="user-badges">
-                            <span className={`status-badge ${getUserStatus(user).toLowerCase()}`}>
+                        <div className="profile-badges">
+                            <span className={`status-badge status-${getUserStatus(user).toLowerCase()}`}>
                                 {getUserStatus(user)}
                             </span>
                             {user.subscription === "premium" && (
                                 <span className="premium-badge">
-                                    <span className="star">★</span> PREMIUM
+                                    <span className="premium-star">★</span> PREMIUM
                                 </span>
                             )}
                         </div>
 
-                        <div className="user-email-row">
-                            <span className="email-icon">✉</span>
-                            <span className="user-email">{user.email}</span>
-                            <span className="separator">|</span>
-                            <span className="verification-badge">
-                                <span className="check-icon">✓</span> Verified Member
+                        <div className="profile-email-row">
+                            <span className="email-text">✉ {user.email}</span>
+                            <span className="divider-dot">|</span>
+                            <span className="verification-text">
+                                {user.verified ? "✓ Verified Member" : "Not Verified"}
                             </span>
                         </div>
 
-                        <div className="user-meta-info">
-                            Account created: {formatDate(user.created_at)} · Last active:{" "}
-                            {formatTimeAgo(user.last_seen)}
+                        <div className="profile-meta-text">
+                            Account created {formatDate(user.created_at)} · Last active {formatTimeAgo(user.last_seen)}
                         </div>
                     </div>
                 </div>
 
                 <div className="profile-header-actions">
                     <button
-                        className="action-btn warning-btn"
+                        className="action-btn warni-btn"
                         onClick={handleSendWarning}
                         disabled={warningLoading}
                     >
-                        <span className="btn-icon">⚠</span>
+                        <span className="btn-ion">⚠</span>
                         {warningLoading ? "Sending..." : "Send Warning"}
                     </button>
-                    <button className="action-btn reverify-btn">
-                        <span className="btn-icon">🔄</span>
-                        Re-verify
-                    </button>
+
                     <button className="action-btn suspend-btn" onClick={handleSuspend}>
                         <span className="btn-icon">⛔</span>
                         Suspend Account
@@ -964,41 +971,120 @@ export default function UserProfile() {
                 </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="profile-tabs">
-                <button
-                    className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
-                    onClick={() => setActiveTab("overview")}
-                >
-                    <span className="tab-icon">👤</span>
-                    Overview
-                </button>
-                <button
-                    className={`tab-button ${activeTab === "photos" ? "active" : ""}`}
-                    onClick={() => setActiveTab("photos")}
-                >
-                    <span className="tab-icon">🖼</span>
-                    Profile Photos
-                    <span className="tab-count">6</span>
-                </button>
-                <button
-                    className={`tab-button ${activeTab === "logs" ? "active" : ""}`}
-                    onClick={() => setActiveTab("logs")}
-                >
-                    <span className="tab-icon">📋</span>
-                    Reports & Logs
-                    <span className="tab-count">1</span>
-                </button>
-            </div>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "40px",
+    padding: "14px 24px",
+    backgroundColor: "#f3f4f6",
+    borderBottom: "1px solid #e5e7eb",
+  }}
+>
+  {/* Overview */}
+  <button
+    onClick={() => setActiveTab("overview")}
+    style={{
+      background: "none",
+      border: "none",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      fontSize: "15px",
+      fontWeight: activeTab === "overview" ? "600" : "500",
+      color: activeTab === "overview" ? "#111827" : "#6b7280",
+      paddingBottom: "10px",
+      borderBottom:
+        activeTab === "overview"
+          ? "3px solid #111827"
+          : "3px solid transparent",
+      cursor: "pointer",
+    }}
+  >
+    <span style={{ fontSize: "18px" }}>👤</span>
+    Overview
+  </button>
 
-            {/* Main Content Area */}
-            <div className="profile-content-wrapper">
-                {/* Left Section */}
-                <div className="profile-left-section">
-                    {/* Overview Tab */}
+  {/* Profile Photos */}
+  <button
+    onClick={() => setActiveTab("photos")}
+    style={{
+      background: "none",
+      border: "none",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      fontSize: "15px",
+      fontWeight: activeTab === "photos" ? "600" : "500",
+      color: activeTab === "photos" ? "#111827" : "#6b7280",
+      paddingBottom: "10px",
+      borderBottom:
+        activeTab === "photos"
+          ? "3px solid #111827"
+          : "3px solid transparent",
+      cursor: "pointer",
+    }}
+  >
+    <span style={{ fontSize: "18px" }}>🖼</span>
+    Profile Photos
+    <span
+      style={{
+        backgroundColor: "#e5e7eb",
+        color: "#374151",
+        fontSize: "12px",
+        padding: "2px 8px",
+        borderRadius: "999px",
+        fontWeight: "600",
+      }}
+    >
+      {Array.isArray(user.photos) ? user.photos.length : 0} 
+    </span>
+  </button>
+
+  {/* Reports & Logs */}
+  <button
+    onClick={() => setActiveTab("logs")}
+    style={{
+      background: "none",
+      border: "none",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      fontSize: "15px",
+      fontWeight: activeTab === "logs" ? "600" : "500",
+      color: activeTab === "logs" ? "#111827" : "#6b7280",
+      paddingBottom: "10px",
+      borderBottom:
+        activeTab === "logs"
+          ? "3px solid #111827"
+          : "3px solid transparent",
+      cursor: "pointer",
+    }}
+  >
+    <span style={{ fontSize: "18px" }}>📋</span>
+    Reports & Logs
+    <span
+      style={{
+        backgroundColor: "#fecaca",
+        color: "#b91c1c",
+        fontSize: "12px",
+        padding: "2px 8px",
+        borderRadius: "999px",
+        fontWeight: "600",
+      }}
+    >
+      {totalReports}
+    </span>
+  </button>
+</div>
+            {/* Main Content Grid */}
+            <div className="profile-content-grid">
+                {/* LEFT COLUMN */}
+                <div className="profile-left-column">
+                    {/* OVERVIEW TAB */}
                     {activeTab === "overview" && (
-                        <div className="personal-details-card">
-                            <div className="card-top-header">
+                        <div className="details-card">
+                            <div className="card-header-row">
                                 <h3 className="card-title">Personal Details</h3>
                                 <button className="edit-details-btn">
                                     <span className="edit-icon">✏</span>
@@ -1006,34 +1092,32 @@ export default function UserProfile() {
                                 </button>
                             </div>
 
-                            <div className="card-divider"></div>
-
-                            <div className="details-info-grid">
-                                <div className="info-item">
-                                    <div className="info-label">AGE & GENDER</div>
-                                    <div className="info-value">
+                            <div className="details-grid">
+                                <div className="detail-group">
+                                    <div className="detail-label">AGE & GENDER</div>
+                                    <div className="detail-value">
                                         {user.age ?? "--"}, {user.gender ?? "--"}
                                     </div>
                                 </div>
 
-                                <div className="info-item">
-                                    <div className="info-label">LOCATION</div>
-                                    <div className="info-value">{user.location ?? "--"}</div>
+                                <div className="detail-group">
+                                    <div className="detail-label">LOCATION</div>
+                                    <div className="detail-value">{user.location ?? "--"}</div>
                                 </div>
 
-                                <div className="info-item">
-                                    <div className="info-label">OCCUPATION</div>
-                                    <div className="info-value">{user.job ?? "--"}</div>
+                                <div className="detail-group">
+                                    <div className="detail-label">OCCUPATION</div>
+                                    <div className="detail-value">{user.job ?? "--"}</div>
                                 </div>
 
-                                <div className="info-item">
-                                    <div className="info-label">EDUCATION</div>
-                                    <div className="info-value">{user.education ?? "--"}</div>
+                                <div className="detail-group">
+                                    <div className="detail-label">EDUCATION</div>
+                                    <div className="detail-value">{user.education ?? "--"}</div>
                                 </div>
                             </div>
 
-                            <div className="bio-container">
-                                <div className="info-label">BIO</div>
+                            <div className="bio-section">
+                                <div className="detail-label">BIO</div>
                                 <div className="bio-content">
                                     {user.about ?? "No bio available"}
                                 </div>
@@ -1041,264 +1125,267 @@ export default function UserProfile() {
                         </div>
                     )}
 
-                    {/* Photos Tab */}
+                    {/* PHOTOS TAB */}
                     {activeTab === "photos" && (
-                        <div className="photo-moderation-container">
-                            <div className="photo-moderation-header">
-                                <h3 className="photo-mod-title">Photo Moderation</h3>
-                                <span className="photo-count-text">
-                                    Total {Array.isArray(user.photos) ? user.photos.length : 0}{" "}
-                                    photos
+                        <div className="photos-card">
+                            <div className="card-header-row">
+                                <h3 className="card-title">Photo Moderation</h3>
+                                <span className="photos-count-text">
+                                    Total {Array.isArray(user.photos) ? user.photos.length : 0} photos
                                 </span>
                             </div>
 
                             <div className="photos-grid">
                                 {Array.isArray(user.photos) &&
                                     user.photos.map((photo, index) => (
-                                        <div
-                                            key={index}
-                                            className={`photo-item ${
-                                                index === 0 ? "approved-photo" : "pending-photo"
-                                            }`}
-                                        >
+                                        <div key={index} className="photo-slot">
                                             <img
                                                 src={photo}
-                                                alt={`Photo ${index + 1}`}
-                                                className="photo-img"
+                                                alt={`User photo ${index + 1}`}
+                                                className="photo-image"
                                                 onError={(e) => {
                                                     e.target.src = defaultAvatar;
                                                 }}
                                             />
                                             {index === 0 && (
-                                                <span className="approval-badge">APPROVED</span>
+                                                <div className="approved-badge">APPROVED</div>
                                             )}
                                         </div>
                                     ))}
 
-                                {[...Array(Math.max(0, 6 - (user.photos?.length || 0)))].map(
-                                    (_, i) => (
-                                        <div key={`empty-${i}`} className="photo-item empty-slot">
-                                            <div className="empty-photo-icon">📷</div>
-                                        </div>
-                                    )
-                                )}
+                                {[...Array(Math.max(0, 6 - (user.photos?.length || 0)))].map((_, i) => (
+                                    <div key={`empty-${i}`} className="photo-slot photo-empty">
+                                        <div className="empty-photo-icon">🖼</div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}
 
-                    {/* Reports & Logs Tab */}
+                    {/* REPORTS TAB */}
                     {activeTab === "logs" && (
-                        <div className="reports-logs-container">
-                            <div className="reports-logs-header">
-                                <div>
+                        <div className="reports-section">
+                            <div className="reports-header">
+                                <div className="reports-header-text">
                                     <h2 className="reports-title">Reports & Logs</h2>
                                     <p className="reports-subtitle">
-                                        Reviewing {totalReports} incidents associated with this
-                                        account.
+                                        Reviewing {totalReports} incidents associated with this account.
                                     </p>
                                 </div>
-                                <div className="reports-actions">
-                                    <button className="reports-filter-btn">Filter</button>
-                                    <button className="reports-export-btn">Export PDF</button>
+                                <div className="reports-header-actions">
+                                    <button className="reports-action-btn">
+                                        <span className="btn-icon">⚙</span>
+                                        Filter
+                                    </button>
+                                    <button className="reports-action-btn">
+                                        <span className="btn-icon">⬇</span>
+                                        Export PDF
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* Reports Statistics */}
-                            <div className="reports-statistics">
+                            {/* Stats Row */}
+                            <div className="reports-stats-grid">
                                 <div className="stat-box">
-                                    <span
-                                        className={`stat-percent ${
-                                            totalUsersPercent >= 0 ? "positive" : "negative"
-                                        }`}
-                                    >
-                                        {totalUsersPercent > 0 ? "+" : ""}
-                                        {totalUsersPercent}%
-                                    </span>
-                                    <h2 className="stat-number">{totalUsers}</h2>
-                                    <p className="stat-label">Total Users</p>
+                                    <div className="stat-header">Total Reports</div>
+                                    <div className="stat-number">{totalReports}</div>
+                                    <div className="stat-icon stat-icon-blue">📄</div>
                                 </div>
 
-                                <div className="stat-box pending">
-                                    <h4 className="stat-heading">Pending Review</h4>
-                                    <h2 className="stat-number">{totalReports}</h2>
+                                <div className="stat-box">
+                                    <div className="stat-header">Pending Review</div>
+                                    <div className="stat-number stat-number-orange">{totalReports - resolvedCount}</div>
+                                    <div className="stat-icon stat-icon-orange">⏳</div>
                                 </div>
 
-                                <div className="stat-box resolved">
-                                    <h4 className="stat-heading">Resolved</h4>
-                                    <h2 className="stat-number">
-                                        {loading ? "..." : resolvedCount}
-                                    </h2>
+                                <div className="stat-box">
+                                    <div className="stat-header">Resolved</div>
+                                    <div className="stat-number stat-number-green">{loading ? "..." : resolvedCount}</div>
+                                    <div className="stat-icon stat-icon-green">✓</div>
                                 </div>
 
-                                <div className="stat-box critical">
-                                    <h4 className="stat-heading">Critical Reports</h4>
-                                    <h2 className="stat-number">
-                                        {loading ? "..." : criticalReportsCount}
-                                    </h2>
+                                <div className="stat-box">
+                                    <div className="stat-header">Critical Reports</div>
+                                    <div className="stat-number stat-number-red">{loading ? "..." : criticalReportsCount}</div>
+                                    <div className="stat-icon stat-icon-red">⚠</div>
                                 </div>
                             </div>
 
                             {/* Reports Table */}
-                            <div className="reports-data-table">
-                                <div className="table-header-row">
-                                    <span>Report ID</span>
-                                    <span>Reported By</span>
-                                    <span>Reason</span>
-                                    <span>Message</span>
-                                    <span>Date</span>
-                                    <span>Status</span>
-                                    <span>Priority</span>
-                                    <span>Action</span>
-                                </div>
-
-                                {loading ? (
-                                    <div className="table-data-row">
-                                        <span colSpan="8">Loading reports...</span>
+                            <div className="reports-table-container">
+                                <div className="reports-table">
+                                    <div className="table-header-row">
+                                        <div className="table-cell">Report ID</div>
+                                        <div className="table-cell">Reported By</div>
+                                        <div className="table-cell">Reason</div>
+                                        <div className="table-cell">Content Type</div>
+                                        <div className="table-cell">Date</div>
+                                        <div className="table-cell">Status</div>
+                                        <div className="table-cell">Priority</div>
+                                        <div className="table-cell">Action</div>
                                     </div>
-                                ) : reportsList.length === 0 ? (
-                                    <div className="table-data-row">
-                                        <span colSpan="8">No reports found</span>
-                                    </div>
-                                ) : (
-                                    reportsList.map((report, index) => {
-                                        const priority = getPriorityFromReason(report.reason);
 
-                                        return (
-                                            <div className="table-data-row" key={report.id}>
-                                                <span>#REP-{index + 1}</span>
-                                                <span>{report.reporter_phone || "Unknown"}</span>
-                                                <span className="reason-badge">
-                                                    {report.reason || "N/A"}
-                                                </span>
-                                                <span>{report.message ?? "No Message"}</span>
-                                                <span>
-                                                    {report.created_at
-                                                        ? new Date(
-                                                              report.created_at
-                                                          ).toLocaleDateString()
-                                                        : "--"}
-                                                </span>
-                                                <span className="status-indicator pending">
-                                                    Pending
-                                                </span>
-                                                <span className={`priority-badge ${priority.className}`}>
-                                                    {priority.label}
-                                                </span>
-                                                <span
-                                                    className="action-eye"
-                                                    onClick={() => setSelectedReport(report)}
-                                                >
-                                                    👁
-                                                </span>
-                                            </div>
-                                        );
-                                    })
-                                )}
-                            </div>
+                                    {loading ? (
+                                        <div className="table-empty-row">Loading reports...</div>
+                                    ) : reportsList.length === 0 ? (
+                                        <div className="table-empty-row">No reports found</div>
+                                    ) : (
+                                        reportsList.map((report, index) => {
+                                            const priority = getPriorityFromReason(report.reason);
 
-                            {/* Pagination */}
-                            <div className="table-pagination">
-                                <button className="pagination-btn active-page">1</button>
-                                <button className="pagination-btn">2</button>
-                                <button className="pagination-btn">3</button>
-                            </div>
-
-                            {/* Reports Footer */}
-                            <div className="reports-bottom-footer">
-                                <span>Moderated by 3 team members today.</span>
-                                <div className="trust-score-info">
-                                    Account Trust Score: <strong>94/100</strong>
+                                            return (
+                                                <div className="table-data-row" key={report.id}>
+                                                    <div className="table-cell">
+                                                        <span className="report-id">#REP-{String(8821 + index).padStart(4, '0')}</span>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <div className="reporter-info">
+                                                            <div className="reporter-avatar">
+                                                                {(report.reporter_phone || "U").substring(0, 2).toUpperCase()}
+                                                            </div>
+                                                            <span className="reporter-name">
+                                                                {report.reporter_phone || "Unknown"}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <span className={`reason-badge reason-${priority.className}`}>
+                                                            {report.reason || "N/A"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <div className="content-type">
+                                                            <span className="content-icon">💬</span>
+                                                            {report.message ? "Chat Message" : "Profile Bio"}
+                                                        </div>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <div className="date-info">
+                                                            {report.created_at
+                                                                ? new Date(report.created_at).toLocaleDateString("en-US", {
+                                                                    month: "short",
+                                                                    day: "numeric",
+                                                                    year: "numeric"
+                                                                })
+                                                                : "--"}
+                                                            <div className="time-info">
+                                                                {report.created_at
+                                                                    ? new Date(report.created_at).toLocaleTimeString("en-US", {
+                                                                        hour: "2-digit",
+                                                                        minute: "2-digit"
+                                                                    })
+                                                                    : ""}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <span className="status-badge-table status-pending">
+                                                            <span className="status-dot"></span>
+                                                            Pending
+                                                        </span>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <span className={`priority-badge priority-${priority.className}`}>
+                                                            {priority.label}
+                                                        </span>
+                                                    </div>
+                                                    <div className="table-cell">
+                                                        <button
+                                                            className="view-action-btn"
+                                                            onClick={() => setSelectedReport(report)}
+                                                        >
+                                                            👁
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
                                 </div>
                             </div>
+
+                           
                         </div>
                     )}
                 </div>
 
-                {/* Right Section */}
-                <div className="profile-right-section">
-                    {/* Engagement Overview Card */}
-                    <div className="engagement-card">
-                        <h4 className="engagement-heading">ENGAGEMENT OVERVIEW</h4>
+{/* RIGHT COLUMN */}
+{activeTab !== "logs" && (
+  <div className="profile-right-column">
+    <div className="engagement-card">
+      <h4 className="engagement-title">ENGAGEMENT OVERVIEW</h4>
 
-                        <div className="engagement-stat">
-                            <div className="stat-icon-wrapper pink">
-                                <FaHeart className="stat-icon" />
-                            </div>
-                            <div className="stat-info">
-                                <h3 className="stat-value">{loading ? "..." : likesReceived}</h3>
-                                <p className="stat-name">Likes Received</p>
-                                <span className="stat-change positive">+12%</span>
-                            </div>
-                        </div>
+      <div className="engagement-stat">
+        <div className="engagement-icon-wrapper pink-icon">
+          <FaHeart className="engagement-icon" />
+        </div>
+        <div className="engagement-stat-info">
+          <div className="engagement-number">
+            {loading ? "..." : likesReceived.toLocaleString()}
+          </div>
+          <div className="engagement-label">Likes Received</div>
+          <div className="engagement-percent positive">+12%</div>
+        </div>
+      </div>
 
-                        <div className="engagement-stat">
-                            <div className="stat-icon-wrapper blue">
-                                <FaUserFriends className="stat-icon" />
-                            </div>
-                            <div className="stat-info">
-                                <h3 className="stat-value">{loading ? "..." : matchesCount}</h3>
-                                <p className="stat-name">Matches</p>
-                                <span className="stat-change positive">+5%</span>
-                            </div>
-                        </div>
+      <div className="engagement-stat">
+        <div className="engagement-icon-wrapper blue-icon">
+          <FaUserFriends className="engagement-icon" />
+        </div>
+        <div className="engagement-stat-info">
+          <div className="engagement-number">{loading ? "..." : matchesCount}</div>
+          <div className="engagement-label">Matches</div>
+          <div className="engagement-percent positive">+5%</div>
+        </div>
+      </div>
 
-                        <div className="engagement-stat">
-                            <div className="stat-icon-wrapper gold">
-                                <FaStar className="stat-icon" />
-                            </div>
-                            <div className="stat-info">
-                                <h3 className="stat-value">{user.subscription || "Gold"}</h3>
-                                <p className="stat-name">Subscription Tier</p>
-                                <span className="expiry-date">Ends 12/24</span>
-                            </div>
-                        </div>
-                    </div>
+      <div className="engagement-stat">
+        <div className="engagement-icon-wrapper gold-icon">
+          <FaStar className="engagement-icon" />
+        </div>
+        <div className="engagement-stat-info">
+          <div className="engagement-number">Gold</div>
+          <div className="engagement-label">Subscription Tier</div>
+          <div className="engagement-date">Ends 12/24</div>
+        </div>
+      </div>
+    </div>
 
-                    {/* Discovery Preferences Card */}
-                    <div className="discovery-card">
-                        <h4 className="discovery-heading">DISCOVERY PREFERENCES</h4>
+    <div className="preferences-card">
+      <h4 className="preferences-title">DISCOVERY PREFERENCES</h4>
 
-                        <div className="preference-section">
-                            <p className="preference-label">Interested in</p>
-                            <div className="preference-pills">
-                                <span className="pill">Men</span>
-                                <span className="pill">Age 25-35</span>
-                            </div>
-                        </div>
+      <div className="preference-section">
+        <div className="preference-label-small">Interested in</div>
+        <div className="preference-pills">
+          <span className="preference-pill">Men</span>
+          <span className="preference-pill">Age 25-35</span>
+        </div>
+      </div>
 
-                        <div className="preference-section">
-                            <p className="preference-label">Distance Range</p>
-                            <div className="distance-slider-container">
-                                <div className="distance-slider">
-                                    <div className="slider-fill" style={{ width: "60%" }}></div>
-                                </div>
-                                <span className="distance-value">30 mi</span>
-                            </div>
-                        </div>
+      <div className="preference-section">
+        <div className="preference-label-small">Distance Range</div>
+        <div className="distance-slider">
+          <div className="slider-track">
+            <div className="slider-fill" style={{ width: "60%" }}></div>
+            <div className="slider-thumb" style={{ left: "60%" }}></div>
+          </div>
+          <div className="distance-value">30 mi</div>
+        </div>
+      </div>
 
-                        <div className="preference-section">
-                            <p className="preference-label">Hobbies</p>
-                            <div className="hobbies-grid">
-                                <span className="hobby-tag">HIKING</span>
-                                <span className="hobby-tag">PHOTOGRAPHY</span>
-                                <span className="hobby-tag">COOKING</span>
-                                <span className="hobby-tag">TRAVEL</span>
-                            </div>
-                        </div>
-                    </div>
+      <div className="preference-section">
+        <div className="preference-label-small">Hobbies</div>
+        <div className="hobby-pills">
+          <span className="hobby-pill">HIKING</span>
+          <span className="hobby-pill">PHOTOGRAPHY</span>
+          <span className="hobby-pill">COOKING</span>
+          <span className="hobby-pill">TRAVEL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
-                    {/* Trust Score Card */}
-                    <div className="trust-score-card">
-                        <h4 className="trust-score-heading">TRUST SCORE</h4>
-                        <div className="trust-score-display">
-                            <h1 className="trust-score-number">94</h1>
-                            <span className="trust-score-max">/100</span>
-                        </div>
-                        <p className="trust-score-description">
-                            User has linked 4 social accounts and has a high response rate.
-                        </p>
-                    </div>
-                </div>
             </div>
 
             {/* Report Detail Modal */}
